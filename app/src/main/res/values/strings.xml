@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">MoodTunes_v2</string>
+
+    <!-- HOME SCREEN -->
+
+    <string name="main_text">To get started, please click the buttons in order</string>
+
+    <string name="header_local_operations">Local Operations</string>
+    <string name="header_network_operations">Network Operations</string>
+
+    <string name="btn_scan_str">Scan songs</string>
+    <string name="btn_gracenote_str">Query songs</string>
+    <string name="btn_metadata_str">Clean metadata</string>
+    <string name="btn_database_str">Setup SQLite</string>
+    <string name="btn_camera_str">Start camera</string>
+
+</resources>

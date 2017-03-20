@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="hundred">100</integer>
+    <integer name="extra_pixel_padding">15</integer>
+</resources>
