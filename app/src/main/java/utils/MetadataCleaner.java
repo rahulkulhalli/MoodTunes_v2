@@ -31,23 +31,64 @@ import java.util.regex.Pattern;
 
 import pojos.Mp3Song;
 
+/**
+ * <hr>
+ *
+ * This is a class that helps remove unwanted metadata from the songs' ID3
+ * tags.<br>
+ *
+ * <hr>
+ *
+ * The class is instantiated via an {@link IntentService}. After finishing the
+ * respective processing, the class sends a broadcast back to the
+ * {@link com.moodtunes.moodtunes_v2.HomeScreenActivity Main Activity}.<br>
+ *
+ * <hr>
+ *
+ * The main working principle of this class is the use of Regular Expressions.
+ * It uses the {@link Pattern} and {@link Matcher} classes from the
+ * {@link java.util.regex} package.
+ */
 public class MetadataCleaner extends IntentService {
 
+    /**
+     * A {@link List} of {@link Mp3Song MP3} songs.
+     */
     private List<Mp3Song> songsMap;
 
+    /**
+     * Default constructor. Every IntentService must have one.
+     */
     public MetadataCleaner() {
         super("MetadataCleaner");
     }
 
-    private final String REGEX = "([\\d\\s\\-]+)?([\\w\\s\\.\\&\\d]+)([\\-\\(\\)a-zA-Z0-9\\.\\[\\]\\{\\}]+)?";
+    /**
+     * Regex String.
+     */
+    private final String mREGEX = "([\\d\\s\\-]+)?([\\w\\s\\.\\&\\d]+)([\\-\\(\\)a-zA-Z0-9\\.\\[\\]\\{\\}]+)?";
 
-    private Pattern pattern = Pattern.compile(REGEX);
+    /**
+     * Compiled {@link Pattern}.
+     */
+    private Pattern pattern = Pattern.compile(mREGEX);
 
-    private List<Mp3Song> validateSongs(final List<Mp3Song> songs) {
+    /**
+     *
+     * A method extract ID3 tag values from an MP3 file and update the list of
+     * {@link Mp3Song} objects.
+     *
+     * @param songs {@link List} of {@link Mp3Song}.
+     *
+     * @return {@link List} of filtered {@link Mp3Song songs}.
+     */
+    private List<Mp3Song> validateSongs(List<Mp3Song> songs) {
         File f = null;
         AudioFile audioFile = null;
         Tag tag = null;
         List<Mp3Song> filteredSongs = new ArrayList<>();
+
+        Log.d(Constants.METADATA_CLASS, "--- BEGINNING OF METADATA CLASS ---");
 
         for (Mp3Song song : songs) {
             String path = song.getSongPath();
@@ -87,8 +128,13 @@ public class MetadataCleaner extends IntentService {
         return filteredSongs;
     }
 
+    /**
+     * Callback for entry point of IntentService.
+     *
+     * @param intent Incoming {@link Intent}.
+     */
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleIntent(final Intent intent) {
 
         Gson gson = new GsonBuilder().create();
         Bundle data = intent.getExtras();
@@ -110,10 +156,25 @@ public class MetadataCleaner extends IntentService {
         newIntent.setAction(getClass().getSimpleName());
         String flattenedData = gson.toJson(reFilteredList);
         newIntent.putExtra("NEW_SONGS_LIST", flattenedData);
+
+        Log.d(Constants.METADATA_CLASS, "--- END OF METADATA CLASS ---");
+
         sendBroadcast(newIntent);
     }
 
-    private String[] isOk(String artist, String title) {
+    /**
+     * A method to verify integrity of ID3 tags. The <b>Artist</b> and the
+     * <b>Title</b> tags are matched against the compiled regular expression.
+     * If they match, their <i>2<sup>nd</sup> group</i> is extracted and
+     * returned
+     *
+     * @param artist Artist string.
+     * @param title Title string.
+     * @return Array of {@link String artist and title}<br>
+     *     <i>Array[0] - filtered Artist</i><br>
+     *     <i>Array[1] - filtered Title</i>
+     */
+    private String[] isOk(final String artist, final String title) {
 
         Matcher artistMatcher = pattern.matcher(artist);
         Matcher titleMatcher = pattern.matcher(title);
@@ -121,13 +182,26 @@ public class MetadataCleaner extends IntentService {
         if (artistMatcher.matches() && titleMatcher.matches()) {
             if (!(Constants.NULL).equals(artistMatcher.group(2))
                     && !(Constants.NULL).equals(titleMatcher.group(2))) {
-                return new String[]{artistMatcher.group(2), titleMatcher.group(2)};
+
+                Log.d(Constants.METADATA_CLASS, "Title (Regex): "
+                        + titleMatcher.group(2) + ", Artist (Regex): "
+                        + artistMatcher.group(2));
+
+                return new String[]{artistMatcher.group(2),
+                        titleMatcher.group(2)};
             }
         }
 
         return null;
     }
 
+    /**
+     * A method that calls the {@code isOk} method to verify data integrity.
+     *
+     * @param result {@link List} of {@link Mp3Song songs}.
+     *
+     * @return Filtered {@link List} of {@link Mp3Song songs}.
+     */
     private List<Mp3Song> cleanMetadata(List<Mp3Song> result) {
         List<Mp3Song> filteredList = new ArrayList<>();
 
@@ -136,6 +210,18 @@ public class MetadataCleaner extends IntentService {
 
                 String[] resultant = isOk(song.getSongArtist(), song.getSongName());
                 if (resultant != null) {
+
+                    Log.d(Constants.METADATA_CLASS, "Before metadata cleaning:"
+                            + "\nArtist: " + song.getSongArtist() + ", Title: "
+                            + song.getSongName());
+
+                    song.setSongArtist(resultant[0]);
+                    song.setSongName(resultant[1]);
+
+                    Log.d(Constants.METADATA_CLASS, "After metadata cleaning:"
+                            + "\nArtist: " + song.getSongArtist() + ", Title: "
+                            + song.getSongName());
+
                     filteredList.add(song);
                 }
             }
