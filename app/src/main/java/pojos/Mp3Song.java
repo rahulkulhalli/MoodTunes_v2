@@ -29,15 +29,10 @@ public class Mp3Song {
      */
     private String levelTwoMood;
 
+    /**
+     * Original song name.
+     */
     private String originalSongName;
-
-    public String getOriginalSongName() {
-        return originalSongName;
-    }
-
-    public void setOriginalSongName(String originalSongName) {
-        this.originalSongName = originalSongName;
-    }
 
     /**
      * Blank Constructor.
@@ -63,6 +58,24 @@ public class Mp3Song {
      */
     public void setSongArtist(final String artist) {
         this.songArtist = artist;
+    }
+
+    /**
+     * Getter for the original song name.
+     *
+     * @return Original song name.
+     */
+    public String getOriginalSongName() {
+        return originalSongName;
+    }
+
+    /**
+     * Setter for original song name.
+     *
+     * @param originalSong The original song name.
+     */
+    public void setOriginalSongName(final String originalSong) {
+        this.originalSongName = originalSong;
     }
 
     /**
@@ -96,19 +109,21 @@ public class Mp3Song {
      * Parameterized constructor.
      *
      * @param name Song name.
+     * @param originalSong Original song name.
      * @param artist Artist name.
      * @param path Path to song.
      * @param lvl1 Level one mood.
      * @param lvl2 Level two mood.
      */
-    public Mp3Song(final String name, final String artist, final String path,
+    public Mp3Song(final String name, final String originalSong,
+                   final String artist, final String path,
                    final String lvl1, final String lvl2) {
         songName = name;
+        originalSongName = originalSong;
         songArtist = artist;
         songPath = path;
         levelOneMood = lvl1;
         levelTwoMood = lvl2;
-
     }
 
     /**

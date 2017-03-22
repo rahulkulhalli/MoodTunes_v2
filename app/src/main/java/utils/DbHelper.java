@@ -41,6 +41,7 @@ public class DbHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(final SQLiteDatabase sqLiteDatabase) {
+        // Table create query.
         String createQuery = "CREATE TABLE " + Constants.TABLE_NAME + "("
                 + Constants.COLUMN_1 + "text,"
                 + Constants.COLUMN_2 + "text,"
@@ -66,7 +67,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Mp3Song mp3Song;
         String dbQuery;
 
         if (songArtist == null) {

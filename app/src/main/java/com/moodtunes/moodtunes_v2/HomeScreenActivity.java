@@ -18,7 +18,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 import pojos.Mp3Song;
-import radams.gracenote.webapi.GracenoteMetadataOET;
 import utils.Constants;
 import utils.DbHelper;
 import utils.GracenoteHelper;
@@ -43,14 +41,41 @@ import utils.MetadataCleaner;
 import utils.SongScanner;
 
 /**
- * Entry point of the application.
+ * The entry point of the entire application.
+ *
+ * <hr>
+ *
+ * <b>Flow</b>:<br>
+ *
+ * 1) User scans songs in phone memory.<br>
+ * 2) User updates this list by filtering songs with bad metadata.<br>
+ * 3) User queries the filtered list of songs with Gracenote and updates each
+ * song's mood(s).<br>
+ * 4) User stores songs in the database.<br>
+ * 5) User starts camera and captures his/her image<br>
+ * 6) Based on the smiling probability, an appropriate SQL query is generated.
+ * <br>
+ * 7) Query is fired onto the database and relevant results are retrieved.<br>
+ * 8) A playlist of these results is created and played.<br>
+ *
+ * <hr>
+ *
  */
 public class HomeScreenActivity extends AppCompatActivity {
 
+    /**
+     * A global {@link List} of {@link Mp3Song songs}.
+     */
     private List<Mp3Song> songs = new ArrayList<>();
 
+    /**
+     * A global {@link List} of filtered {@link Mp3Song songs}.
+     */
     private List<Mp3Song> filteredSongs = new ArrayList<>();
 
+    /**
+     * A global {@link List} of updated {@link Mp3Song songs}.
+     */
     private List<Mp3Song> finalSongsList = new ArrayList<>();
 
     /**
@@ -58,18 +83,6 @@ public class HomeScreenActivity extends AppCompatActivity {
      * corresponding paths.
      */
     private Map<String, String> songsMap;
-
-    /**
-     * A global variable for maintaining a list of song titles and their
-     * corresponding artists.
-     */
-    private Map<String, String> filteredSongsMap;
-
-    /**
-     * A global variable for maintaining a list of song titles and their
-     * respective mood metadata.
-     */
-    private Map<String, List<GracenoteMetadataOET>> finalSongsMap;
 
     /**
      * A global variable to keep track of execution time.
@@ -220,7 +233,15 @@ public class HomeScreenActivity extends AppCompatActivity {
                 Constants.IMAGE_FILE_NAME);
     }
 
-    private boolean isValidSong(Mp3Song song) {
+    /**
+     * A helper method to verify the {@link Mp3Song song}'s integrity before
+     * it is added to the database.
+     *
+     * @param song The {@link Mp3Song song} in question.
+     * @return {@link Boolean} indicating the integrity of said
+     * {@link Mp3Song song}.
+     */
+    private boolean isValidSong(final Mp3Song song) {
 
         if (song.getSongName() != null
                 && song.getSongArtist() != null
@@ -276,32 +297,32 @@ public class HomeScreenActivity extends AppCompatActivity {
 
                         if (song.getSongName().contains("'")) {
                             song.setSongName(song.getSongName()
-                                    .replace("'","''"));
+                                    .replace("'", "''"));
                         }
 
                         if (song.getSongPath().contains("'")) {
                             song.setSongPath(song.getSongPath()
-                                    .replace("'","''"));
+                                    .replace("'", "''"));
                         }
 
                         if (song.getSongArtist().contains("'")) {
                             song.setSongArtist(song.getSongArtist()
-                                    .replace("'","''"));
+                                    .replace("'", "''"));
                         }
 
                         if (song.getLevelOneMood() != null && song
                                 .getLevelOneMood().contains("'")) {
                             song.setLevelOneMood(song.getLevelOneMood()
-                                    .replace("'","''"));
+                                    .replace("'", "''"));
                         }
 
                         if (song.getLevelTwoMood() != null && song
                                 .getLevelTwoMood().contains("'")) {
                             song.setLevelTwoMood(song.getLevelTwoMood()
-                                    .replace("'","''"));
+                                    .replace("'", "''"));
                         }
 
-                        if (isValidSong(song)){
+                        if (isValidSong(song)) {
                             Log.d(Constants.HOME_SCREEN_CLASS, "Adding "
                                     + song.getSongName() + " to the database.");
 
@@ -319,7 +340,8 @@ public class HomeScreenActivity extends AppCompatActivity {
                     Intent cameraIntent =
                             new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                    Uri photoURI = FileProvider.getUriForFile(HomeScreenActivity.this,
+                    Uri photoURI = FileProvider
+                            .getUriForFile(HomeScreenActivity.this,
                             BuildConfig.APPLICATION_ID + ".provider",
                             prepareFile());
 
