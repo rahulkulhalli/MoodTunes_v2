@@ -12,6 +12,16 @@ An Android application that uses the Google Vision API and the Gracenote API to 
 <img src="/Resources/1.png" alt="Credits: Gracenote"/>
 </div>
 
+<div align="center">
+<h3>Level one moods</h3>
+<img src="/Resources/2.png" alt="Credits: Gracenote" />
+</div>
+
+<div align="center">
+<h3>Level two moods</h3>
+<img src="/Resources/3.png" alt="Credits: Gracenote" />
+</div>
+
 # Third party libraries used
 <ul>
 <li><b><a href="https://github.com/googlesamples/android-vision">Google Vision API</a></b></li>
