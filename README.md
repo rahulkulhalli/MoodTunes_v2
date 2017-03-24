@@ -34,3 +34,6 @@ Credits: Gracenote
 <li><b><a href="https://github.com/googlesamples/android-vision">Google Vision API</a></b></li>
 <li><b><a href="https://github.com/richadams/java-gracenote">Gracenote API Wrapper</a></b></li>
 </ul>
+
+# Contributing to the project
+If you're interested in contributing to the project, please leave a request via e-mail at <a href="mailto:rahulkulhalli@gmail.com">
