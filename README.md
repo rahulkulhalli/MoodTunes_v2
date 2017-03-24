@@ -36,4 +36,4 @@ Credits: Gracenote
 </ul>
 
 # Contributing to the project
-If you're interested in contributing to the project, please leave a request via e-mail at <a href="mailto:rahulkulhalli@gmail.com">
+If you're interested in contributing to the project, please leave a request via e-mail at <a href="mailto:rahulkulhalli@gmail.com">this</a> address.
