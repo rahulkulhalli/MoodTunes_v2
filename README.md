@@ -10,16 +10,23 @@ An Android application that uses the Google Vision API and the Gracenote API to 
 <div align="center">
 <h3>Valiance and Arousal</h3>
 <img src="/Resources/1.png" alt="Credits: Gracenote"/>
+Credits: Gracenote
 </div>
+
+<hr>
 
 <div align="center">
 <h3>Level one moods</h3>
 <img src="/Resources/2.png" alt="Credits: Gracenote" />
+Credits: Gracenote
 </div>
+
+<hr>
 
 <div align="center">
 <h3>Level two moods</h3>
 <img src="/Resources/3.png" alt="Credits: Gracenote" />
+Credits: Gracenote
 </div>
 
 # Third party libraries used
