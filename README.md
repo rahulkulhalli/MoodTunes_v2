@@ -33,6 +33,7 @@ Credits: Gracenote
 <ul>
 <li><b><a href="https://github.com/googlesamples/android-vision">Google Vision API</a></b></li>
 <li><b><a href="https://github.com/richadams/java-gracenote">Gracenote API Wrapper</a></b></li>
+<li><b><a href="http://www.jthink.net/jaudiotagger/">JAudioTagger</a></b></li>
 </ul>
 
 # Contributing to the project
