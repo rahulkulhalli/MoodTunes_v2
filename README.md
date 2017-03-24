@@ -6,6 +6,12 @@ An Android application that uses the Google Vision API and the Gracenote API to 
   <img src="/Resources/flow_diagram.png" alt="Flow Diagram"/>
 </p>
 
+# Mood detection and mapping
+<div align="center">
+<h3>Valiance and Arousal</h3>
+<img src="/Resources/1.png" alt="Credits: Gracenote"/>
+</div>
+
 # Third party libraries used
 <ul>
 <li><b><a href="https://github.com/googlesamples/android-vision">Google Vision API</a></b></li>
