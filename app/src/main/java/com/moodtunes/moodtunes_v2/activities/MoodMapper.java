@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import utils.LevelOneMoods;
+import utils.LevelTwoMoods;
 
 public class MoodMapper {
 
@@ -41,11 +42,24 @@ public class MoodMapper {
 
     public static String mapLevelTwoMood(final double smilingProbability) {
 
+        Map<String, List<String>> levelTwoMoods = LevelTwoMoods
+                .getLevelTwoMoods();
+
         String[] tokens = String
                 .valueOf(smilingProbability / LEVEL_TWO_DIVIDING_CONSTANT)
                 .split(DOT_DELIMITER);
 
+        int[] delimiters = new int[]{Integer.parseInt(tokens[0]),
+                Integer.parseInt(String.valueOf(tokens[1].charAt(0)))};
 
+        int counter = 0;
+        for (Map.Entry<String, List<String>> entry : levelTwoMoods.entrySet()) {
+            if (counter == delimiters[0]) {
+                return entry.getValue().get(delimiters[1]);
+            } else {
+                counter++;
+            }
+        }
 
         return null;
     }
