@@ -11,13 +11,12 @@
     </style>
 
     <!-- Material design themed style -->
-    <style name="MaterialTheme" parent="Theme.AppCompat">
-        <item name="android:windowBackground">@color/colorBackground</item>
-        <item name="android:colorPrimary">@color/palettePrimary</item>
-        <item name="android:colorPrimaryDark">@color/paletteAccent</item>
-        <item name="android:colorAccent">@android:color/holo_blue_light</item>
-        <item name="android:textColorPrimary">@android:color/holo_green_dark</item>
-        <item name="android:textColorSecondary">@android:color/holo_green_dark</item>
+    <style name="MaterialTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:colorPrimary">#ff5722</item>
+        <item name="android:colorPrimaryDark">#d84315</item>
+        <item name="android:colorAccent">#ffccbc</item>
+        <item name="android:textColorPrimary">#1a237e</item>
+        <item name="android:textColorSecondary">#3f51b5</item>
     </style>
 
 </resources>

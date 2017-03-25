@@ -9,9 +9,24 @@
     <string name="header_network_operations">Network Operations</string>
 
     <string name="btn_scan_str">Scan songs</string>
+    <string name="scan_info">This stage scans all the MP3 files in your SD card. If you have any songs in your internal storage (separate storage), make sure to migrate your songs to the SD card. Click on the icon on the right to get started.</string>
+
     <string name="btn_gracenote_str">Query songs</string>
+    <string name="gracenote_info">This stage will query all the filtered songs with the Gracenote servers. If the size of your collection is large, this may take some time. It generally takes about a minute per 100 valid songs. Click on the icon on the right to get started.</string>
+
     <string name="btn_metadata_str">Clean metadata</string>
+    <string name="metadata_info">This stage will filter all the songs which our algorithm deems inappropriate. If our algorithm does\'nt find a valid ID3 tag for a particular song file, it will check the file name. If it still can\'t extract relevant data, it ignores the file. Click on the icon on the right to get started.</string>
+
     <string name="btn_database_str">Setup SQLite</string>
+    <string name="db_info">This stage will push all the final queried songs in a mini-database. Click on the icon on the right to get started.</string>
+
     <string name="btn_camera_str">Start camera</string>
+    <string name="camera_info"><b>SMILE!</b> This stage will use your phone\'s camera to capture your face and give us your mood. Click on the icon on the right to get started.</string>
+
+    <string name="btn_faq_str">FAQ</string>
+    <string name="faq_info">Doubts? Make sure you go through all the questions. Click on the icon on the right to get started.</string>
+
+    <!-- TOOLBAR TITLES -->
+    <string name="home_toolbar">MoodTunes v2.0</string>
 
 </resources>

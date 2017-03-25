@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="btn_scan" />
+    <item type="id" name="btn_metadata" />
+    <item type="id" name="btn_gracenote" />
+    <item type="id" name="btn_db" />
+    <item type="id" name="btn_camera" />
+    <item type="id" name="btn_faq" />
+</resources>

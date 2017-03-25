@@ -1,4 +1,4 @@
-package com.moodtunes.moodtunes_v2;
+package com.moodtunes.moodtunes_v2.activities;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -14,22 +14,40 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.moodtunes.moodtunes_v2.BuildConfig;
+import com.moodtunes.moodtunes_v2.R;
+import com.moodtunes.moodtunes_v2.adapters.ExpandableListAdapter;
+import com.moodtunes.moodtunes_v2.fragments.FaqFragment;
+import com.moodtunes.moodtunes_v2.interfaces.ToolbarInterface;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +79,16 @@ import utils.SongScanner;
  * <hr>
  *
  */
-public class HomeScreenActivity extends AppCompatActivity {
+public class HomeScreenActivity extends AppCompatActivity implements ToolbarInterface {
+
+    private ExpandableListView myView;
+
+    private Toolbar mainToolbar;
+
+    /**
+     * A reference to the root view.
+     */
+    private RelativeLayout rootView;
 
     /**
      * A global {@link List} of {@link Mp3Song songs}.
@@ -93,6 +120,11 @@ public class HomeScreenActivity extends AppCompatActivity {
      * Reference to the custom {@link BroadcastReceiver}.
      */
     private MyUiReceiver myUiReceiver;
+
+    /**
+     * A global variable for smiling probability.
+     */
+    private double smilingProbability;
 
     /**
      * A method which checks if required permissions are allowed.
@@ -165,18 +197,66 @@ public class HomeScreenActivity extends AppCompatActivity {
                     scanner.initialize();
                     Bitmap croppedImage = scanner.cropImage();
 
-                    double smilingProb = scanner
+                    smilingProbability = scanner
                             .getSmilingProbability(croppedImage)
                             * getResources().getInteger(R.integer.hundred);
 
                     Log.d(Constants.HOME_SCREEN_CLASS, "Smiling probability is "
-                            + String.valueOf(smilingProb) + "%");
+                            + String.valueOf(smilingProbability) + "%");
+
+                    showAlert("Smiling probability is " + smilingProbability);
 
                 } catch (FileNotFoundException fNfE) {
                     fNfE.printStackTrace();
                 }
             }
         }
+    }
+
+    /**
+     * A method to show the {@link android.support.design.widget.Snackbar}.
+     *
+     * @param alertMsg String message to display
+     */
+    private void showAlert(final String alertMsg) {
+        Snackbar.make(rootView, alertMsg, Snackbar.LENGTH_LONG);
+    }
+
+    private ExpandableListView setMyAdapter() {
+        ExpandableListView view =
+                (ExpandableListView) findViewById(R.id.stepper_menu);
+
+        List<String> headers = new ArrayList<>();
+        Map<String, String> children = new HashMap<>();
+
+        headers.add(getString(R.string.btn_scan_str));
+        headers.add(getString(R.string.btn_metadata_str));
+        headers.add(getString(R.string.btn_gracenote_str));
+        headers.add(getString(R.string.btn_database_str));
+        headers.add(getString(R.string.btn_camera_str));
+        headers.add(getString(R.string.btn_faq_str));
+
+        children.put(headers.get(0), getString(R.string.scan_info));
+        children.put(headers.get(1), getString(R.string.metadata_info));
+        children.put(headers.get(2), getString(R.string.gracenote_info));
+        children.put(headers.get(3), getString(R.string.db_info));
+        children.put(headers.get(4), getString(R.string.camera_info));
+        children.put(headers.get(5), getString(R.string.faq_info));
+
+        List<Integer> iconIds = new ArrayList<>();
+        iconIds.add(R.drawable.ic_sync_black_36dp);
+        iconIds.add(R.drawable.ic_filter_list_black_36dp);
+        iconIds.add(R.drawable.ic_cloud_upload_black_36dp);
+        iconIds.add(R.drawable.ic_sd_storage_black_36dp);
+        iconIds.add(R.drawable.ic_camera_alt_black_36dp);
+        iconIds.add(R.drawable.ic_question_answer_black_36dp);
+
+        ExpandableListAdapter myCustomAdapter =
+                new ExpandableListAdapter(headers, children, iconIds, getApplication());
+
+        view.setAdapter(myCustomAdapter);
+
+        return view;
     }
 
     /**
@@ -197,29 +277,23 @@ public class HomeScreenActivity extends AppCompatActivity {
          */
         CustomListener customListener = new CustomListener();
 
-        /**
-         * Get reference of first button
-         */
-        final ImageView scanButton = (ImageView)
-                findViewById(R.id.btn_scan);
-        scanButton.setOnClickListener(customListener);
+        initializeToolbar(getString(R.string.app_name));
 
-        final ImageView queryButton = (ImageView)
-                findViewById(R.id.btn_gracenote);
-        queryButton.setOnClickListener(customListener);
+        myView = setMyAdapter();
+        myView.setOnChildClickListener(new CustomExpandableAdapterListener());
+        myView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            int someIndex = -1;
 
-        final ImageView metadataButton = (ImageView)
-                findViewById(R.id.btn_metadata);
-        metadataButton.setOnClickListener(customListener);
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (groupPosition != someIndex) {
+                    myView.collapseGroup(someIndex);
+                }
+                someIndex = groupPosition;
+            }
+        });
 
-        final ImageView dbButton = (ImageView)
-                findViewById(R.id.btn_db);
-
-        final ImageView cameraButton = (ImageView)
-                findViewById(R.id.btn_camera);
-        cameraButton.setOnClickListener(customListener);
-
-        dbButton.setOnClickListener(customListener);
+        rootView = (RelativeLayout) findViewById(R.id.root_view);
     }
 
     /**
@@ -252,6 +326,69 @@ public class HomeScreenActivity extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    @Override
+    public void initializeToolbar(final String toolbarTitle) {
+        mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setToolbarTitle(toolbarTitle);
+    }
+
+    @Override
+    public void setToolbarTitle(final String title) {
+        View toolbarView = mainToolbar.getRootView();
+        TextView headerText = (TextView) toolbarView.findViewById(R.id.toolbar_title);
+        headerText.setText(title);
+        setDropdownListener();
+    }
+
+    @Override
+    public void setDropdownListener() {
+        mainToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAlert("Toolbar dropdown clicked");
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initializeToolbar(getString(R.string.app_name));
+    }
+
+
+    private class CustomExpandableAdapterListener implements ExpandableListView
+            .OnChildClickListener {
+
+        @Override
+        public boolean onChildClick(ExpandableListView expandableListView,
+                                    View view, int parentNo, int childNo, long l) {
+
+            switch (parentNo) {
+                case 0:
+                    (new ScannerAsyncTask()).execute();
+                    break;
+
+                case 1:
+                    Intent serviceIntent = new Intent(HomeScreenActivity.this,
+                            MetadataCleaner.class);
+                    Gson gson = new GsonBuilder().create();
+                    String flattenedSongs = gson.toJson(songs);
+                    serviceIntent.putExtra("SONGS_LIST", flattenedSongs);
+                    startService(serviceIntent);
+                    myView.collapseGroup(1);
+                    break;
+
+                case 2:
+                    startTime = System.currentTimeMillis();
+                    (new GracenoteAsyncTask()).execute();
+                    break;
+            }
+
+            return true;
+        }
     }
 
     /**
@@ -351,6 +488,20 @@ public class HomeScreenActivity extends AppCompatActivity {
                             Constants.INTENT_REQUEST_CODE);
                     break;
 
+                case R.id.btn_faq:
+
+                    FragmentTransaction faqTransaction =
+                            getSupportFragmentManager().beginTransaction();
+
+                    Fragment faqFragment = new FaqFragment();
+
+                    faqTransaction.replace(R.id.container_frame, faqFragment)
+                            .addToBackStack(null);
+
+                    faqTransaction.commit();
+
+                    break;
+
                 default: break;
             }
         }
@@ -399,6 +550,10 @@ public class HomeScreenActivity extends AppCompatActivity {
             }
 
             Log.d(Constants.HOME_SCREEN_CLASS, "Added songs to list");
+            Toast.makeText(HomeScreenActivity.this, "We detected a total of "
+                    + songs.size() + " songs on your SD card", Toast
+                    .LENGTH_LONG).show();
+            myView.collapseGroup(0);
         }
     }
 
@@ -411,6 +566,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(MetadataCleaner.class.getSimpleName());
         registerReceiver(myUiReceiver, intentFilter);
+        super.onStart();
         super.onStart();
     }
 

@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <style>
+            .dark {
+                font-weight: bold;
+                font-size: 20px;
+                padding-left: 10px;
+                padding-right: 10px;
+                padding-top: 10px;
+                color: #1a237e;
+            }
+            
+            .light {
+                font-size: 18px;
+                padding-left: 10px;
+                padding-right: 10px;
+                color: #3f51b5;
+            }
+            
+            a:link {
+                font-weight: bold;
+                color: black;
+            }
+            
+        </style>
+    </head>
+    
+    <body>
+        <p class = "dark">Q. 1) I can see that one (or many) songs aren't identified by my application. Why is this so?</p>
+        <p class = "light">There can be multiple reasons for this. Our application will only recognize MP3 files. WAV, FLAC, AAC, etc. files will <b>not</b> be recognized. As long as your song file has an extension of mp3 (or MP3), run this quick check list and see if your song meets at least one of the following criteria:<br /><br>
+            I) Your music file has a <b>valid</b> ID3 tag.<br>
+            II) You are following the <i>Artist - Title</i> naming convention for your music file name.<br>
+            III) Your music file is present in the SD card. Our application will only scan the SD card for music, so please make sure that you migrate all your songs to the SD card. Placement is irrelevant.<br>
+            IV) Your music file is not hidden.<br>
+        </p>
+        
+        <p class = "dark">Q. 2) Why does querying song information take so much time?</p>
+        <p class = "light">If your music is large (and valid), querying will probably take some time. We've found that it takes around 1 to 1.25 minutes to query a batch of 100 valid songs. We'd recommend using a 3G/4G connection or WiFi.</p>
+        
+        <p class = "dark">Q. 3) Is it mandatory for my MP3 files to have an ID3 tag?</p>
+        <p class = "light">Not really, but we'd highly recommend it. Our song filtering algorithm will first check ID3 tag validity and then move on to the file name in case of failure of the former. However, if the file name validity check fails, the song is discarded.</p>
+        
+        <p class="dark">Q. 4) What is this 'file name validity'?</p>
+        <p class="light">As mentioned in Ans. 3, our algorithm goes through two stages of file filtering - the ID3 tag stage and the file name stage. If our algorithm does not detect a valid ID3 tag, it checks the name of the file. The file name <b>MUST</b> be in the format <b>"Artist - Title"</b> (without quotes).<br>
+        <strong><u>E.g.: Pink Floyd - Coming Back to Life.mp3</u></strong></p>
+        
+        <p class="dark">Q. 5) Is the application development still ongoing? If so, how can I contribute?
+        <p class="light">Yes, the application development is still in it's <i>alpha</i> stage. <b>Sure, you can contribute!</b> Visit <a href="https://github.com/rahulkulhalli/MoodTunes_v2">this</a> GitHub page and follow the contribution procedure in the Readme.
+        
+        <p class="dark">Q. 6) How do you guys retrieve the song mood?</p>
+        <p class="light">We use a state-of-the-art audio fingerprinting mechanism that allows us to retrieve audio moods via an acoustic neural network. Just kidding, we use the Gracenote API. You can check out their developer website <a href="https://developer.gracenote.com/">here</a>.</p>
+        
+        <p class="dark">Q. 7) Which libraries have you used for this application?</p>
+        <p class="light">You can find the complete list of dependencies on the GitHub link posted in Ans. 5.</p>
+        
+        <p class="dark">Q. 8) How is the music mood mapped to my facial mood?</p>
+        <p class="light">That's where the genius of the application <i>(and the developers)</i> lies. If you visit the GitHub page, you'll see three diagrams on the front page. The first one tells you how Gracenote categorizes moods. The second is the 5x5 mood matrix, also called the Level one mood. The third image is a 10x10 matrix, a.k.a. the Level Two Mood. The Level Two mood is a fine-grain version of the Level One mood. We map your smiling probability to the 5x5 and 10x10 matrix. If you need further clarification, please let us know so.</p>
+        
+    </body>
+
+</html>

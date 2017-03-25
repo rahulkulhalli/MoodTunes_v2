@@ -1,4 +1,4 @@
-package com.moodtunes.moodtunes_v2;
+package com.moodtunes.moodtunes_v2.activities;
 
 import android.content.Context;
 import android.graphics.Bitmap;

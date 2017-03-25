@@ -48,6 +48,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 + Constants.COLUMN_3 + "text,"
                 + Constants.COLUMN_4 + "text,"
                 + Constants.COLUMN_5 + "text"
+                + Constants.COLUMN_6 + "text"
                 + ")";
 
         sqLiteDatabase.execSQL(createQuery);
@@ -78,7 +79,7 @@ public class DbHelper extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 return new Mp3Song(cursor.getString(0), cursor.getString(1),
                         cursor.getString(2), cursor.getString(3),
-                        cursor.getString(4));
+                        cursor.getString(4), cursor.getString(5));
             }
 
             cursor.close();
@@ -92,7 +93,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         if (c.moveToFirst()) {
             return new Mp3Song(c.getString(0), c.getString(1), c.getString(2),
-                    c.getString(3), c.getString(4));
+                    c.getString(3), c.getString(4), c.getString(5));
         }
 
         c.close();
@@ -124,6 +125,7 @@ public class DbHelper extends SQLiteOpenHelper {
         String insertQuery = "INSERT INTO "
                 + Constants.TABLE_NAME + " VALUES ('"
                 + mp3Song.getSongName() + "','"
+                + mp3Song.getOriginalSongName() + "','"
                 + mp3Song.getSongArtist() + "','"
                 + mp3Song.getSongPath() + "','"
                 + mp3Song.getLevelOneMood() + "','"
