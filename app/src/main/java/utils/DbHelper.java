@@ -43,12 +43,12 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onCreate(final SQLiteDatabase sqLiteDatabase) {
         // Table create query.
         String createQuery = "CREATE TABLE " + Constants.TABLE_NAME + "("
-                + Constants.COLUMN_1 + "text,"
-                + Constants.COLUMN_2 + "text,"
-                + Constants.COLUMN_3 + "text,"
-                + Constants.COLUMN_4 + "text,"
-                + Constants.COLUMN_5 + "text"
-                + Constants.COLUMN_6 + "text"
+                + Constants.COLUMN_1 + " text,"
+                + Constants.COLUMN_2 + " text,"
+                + Constants.COLUMN_3 + " text,"
+                + Constants.COLUMN_4 + " text,"
+                + Constants.COLUMN_5 + " text"
+                + Constants.COLUMN_6 + " text"
                 + ")";
 
         sqLiteDatabase.execSQL(createQuery);
@@ -72,7 +72,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         if (songArtist == null) {
             dbQuery = "SELECT * FROM " + Constants.TABLE_NAME
-                    + "WHERE " + Constants.COLUMN_1 + " = " + songTitle;
+                    + "WHERE " + Constants.COLUMN_1 + " = '" + songTitle + "'";
 
             Cursor cursor = db.rawQuery(dbQuery, null);
 
@@ -87,7 +87,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         dbQuery = "SELECT * FROM " + Constants.TABLE_NAME
                 + "WHERE " + Constants.COLUMN_1 + " = '" + songTitle
-                + "' AND " + Constants.COLUMN_2 + " = '" + songArtist + "'";
+                + "' AND " + Constants.COLUMN_3 + " = '" + songArtist + "'";
 
         Cursor c = db.rawQuery(dbQuery, null);
 
