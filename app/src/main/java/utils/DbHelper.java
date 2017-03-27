@@ -47,7 +47,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 + Constants.COLUMN_2 + " text,"
                 + Constants.COLUMN_3 + " text,"
                 + Constants.COLUMN_4 + " text,"
-                + Constants.COLUMN_5 + " text"
+                + Constants.COLUMN_5 + " text,"
                 + Constants.COLUMN_6 + " text"
                 + ")";
 
