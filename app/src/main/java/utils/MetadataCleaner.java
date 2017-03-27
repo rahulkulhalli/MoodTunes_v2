@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
@@ -54,6 +55,11 @@ public class MetadataCleaner extends IntentService {
     private List<Mp3Song> songsMap;
 
     /**
+     * Minimum threshold duration of MP3 song.
+     */
+    private static final int MINIMUM_SONG_LENGTH_FILTER = 60;
+
+    /**
      * Default constructor. Every IntentService must have one.
      */
     public MetadataCleaner() {
@@ -84,6 +90,7 @@ public class MetadataCleaner extends IntentService {
         AudioFile audioFile = null;
         Tag tag = null;
         List<Mp3Song> filteredSongs = new ArrayList<>();
+        Mp3Song mp3Song;
 
         Log.d(Constants.METADATA_CLASS, "--- BEGINNING OF METADATA CLASS ---");
 
@@ -91,23 +98,72 @@ public class MetadataCleaner extends IntentService {
             String path = song.getSongPath();
             try {
                 audioFile = AudioFileIO.read(new File(path));
-                if (audioFile != null) {
+                // Accept ONLY those songs whose length is > 60 seconds!
+                // This will help us filter ringtones and other notification
+                // MP3s.
+                if (audioFile != null && audioFile.getAudioHeader()
+                        .getTrackLength() > MINIMUM_SONG_LENGTH_FILTER) {
                     tag = audioFile.getTag();
                     // Get artist
                     if (tag == null) {
-                        Log.d(Constants.METADATA_CLASS, path + " has no tag");
-                    } else {
-                        Mp3Song mp3Song = new Mp3Song();
+                        Log.d(Constants.METADATA_CLASS, path + " has no tag."
+                                + "Resorting to fallback method...");
+                        String[] fallback = path.split("-");
+                        String title = "";
+                        if (fallback.length > 2) {
+                            for (int i = 1; i < fallback.length; i++) {
+                                title += fallback[i];
+                            }
+                        } else {
+                            title = fallback[1].trim();
+                        }
+                        Log.d(Constants.METADATA_CLASS, "Fallback parsing"
+                                + " results :: Artist -> " + fallback[0] + ","
+                                + " Title -> " + title);
+                        // title has '-' in it
+                        mp3Song = new Mp3Song();
                         mp3Song.setSongPath(song.getSongPath());
                         mp3Song.setOriginalSongName(song.getOriginalSongName());
-                        mp3Song.setSongArtist(tag.getFirst(FieldKey.ARTIST));
-                        mp3Song.setSongName(tag.getFirst(FieldKey.TITLE));
+                        mp3Song.setSongArtist(fallback[0].trim());
+                        mp3Song.setSongName(title);
+                    } else {
+                        mp3Song = new Mp3Song();
+                        if (tag.getFirst(FieldKey.ARTIST) != null
+                                && tag.getFirst(FieldKey.TITLE) != null) {
+                            mp3Song.setSongPath(song.getSongPath());
+                            mp3Song.setOriginalSongName(song
+                                    .getOriginalSongName());
+                            mp3Song.setSongArtist(tag.getFirst(FieldKey
+                                    .ARTIST));
+                            mp3Song.setSongName(tag.getFirst(FieldKey.TITLE));
 
-                        Log.d(Constants.METADATA_CLASS, "Adding to filtered"
-                                + "list : " + mp3Song.toString());
-
-                        filteredSongs.add(mp3Song);
+                            Log.d(Constants.METADATA_CLASS, "Adding to filtered"
+                                    + "list : " + mp3Song.toString());
+                        } else {
+                            Log.d(Constants.METADATA_CLASS, "Song at path '"
+                                    + path + "' has a valid ID3 tag, but one of"
+                                    + " its crucial fields is missing. "
+                                    + "Resorting to fallback parsing...");
+                            String[] fallback = path.split("-");
+                            String title = "";
+                            if (fallback.length > 2) {
+                                for (int i = 1; i < fallback.length; i++) {
+                                    title += fallback[i];
+                                }
+                            } else {
+                                title = fallback[1].trim();
+                            }
+                            Log.d(Constants.METADATA_CLASS, "Fallback parsing"
+                                    + " results :: Artist -> " + fallback[0]
+                                    + ", Title -> " + title);
+                            mp3Song.setSongPath(song.getSongPath());
+                            mp3Song.setOriginalSongName(song
+                                    .getOriginalSongName());
+                            mp3Song.setSongArtist(fallback[0].trim());
+                            mp3Song.setSongName(title.trim());
+                        }
                     }
+                    filteredSongs.add(mp3Song);
                 }
             } catch (CannotReadException cne) {
                 cne.printStackTrace();
