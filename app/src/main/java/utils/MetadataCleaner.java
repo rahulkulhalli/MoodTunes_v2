@@ -86,9 +86,8 @@ public class MetadataCleaner extends IntentService {
      * @return {@link List} of filtered {@link Mp3Song songs}.
      */
     private List<Mp3Song> validateSongs(List<Mp3Song> songs) {
-        File f = null;
-        AudioFile audioFile = null;
-        Tag tag = null;
+        AudioFile audioFile;
+        Tag tag;
         List<Mp3Song> filteredSongs = new ArrayList<>();
         Mp3Song mp3Song;
 
@@ -108,7 +107,8 @@ public class MetadataCleaner extends IntentService {
                     if (tag == null) {
                         Log.d(Constants.METADATA_CLASS, path + " has no tag."
                                 + "Resorting to fallback method...");
-                        String[] fallback = path.split("-");
+                        String[] fallback = song.getOriginalSongName()
+                                .split("-");
                         String title = "";
                         if (fallback.length > 2) {
                             for (int i = 1; i < fallback.length; i++) {
@@ -144,7 +144,8 @@ public class MetadataCleaner extends IntentService {
                                     + path + "' has a valid ID3 tag, but one of"
                                     + " its crucial fields is missing. "
                                     + "Resorting to fallback parsing...");
-                            String[] fallback = path.split("-");
+                            String[] fallback = song.getOriginalSongName()
+                                    .split("-");
                             String title = "";
                             if (fallback.length > 2) {
                                 for (int i = 1; i < fallback.length; i++) {
@@ -259,9 +260,11 @@ public class MetadataCleaner extends IntentService {
         List<Mp3Song> filteredList = new ArrayList<>();
 
         for (Mp3Song song : result) {
-            if (!song.getSongArtist().isEmpty() && !song.getSongName().isEmpty()) {
+            if (!song.getSongArtist().isEmpty() && !song.getSongName()
+                    .isEmpty()) {
 
-                String[] resultant = isOk(song.getSongArtist(), song.getSongName());
+                String[] resultant = isOk(song.getSongArtist(), song
+                        .getSongName());
                 if (resultant != null) {
 
                     Log.d(Constants.METADATA_CLASS, "Before metadata cleaning:"
