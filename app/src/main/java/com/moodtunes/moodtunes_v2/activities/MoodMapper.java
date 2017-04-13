@@ -1,5 +1,6 @@
 package com.moodtunes.moodtunes_v2.activities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -62,5 +63,25 @@ public class MoodMapper {
         }
 
         return null;
+    }
+
+    //TODO: implement this!
+    public static List<String>
+    getPositiveLevelOneMoodsFrom(String startPosition) {
+        List<String> myMoods = new ArrayList<>();
+
+        Map<String, List<String>> moods = LevelOneMoods.getLevelOneMoods();
+
+        int x = 0;
+        for (Map.Entry<String, List<String>> entry : moods.entrySet()) {
+            if (entry.getValue().contains(startPosition)) {
+                int anchorPos = entry.getValue().indexOf(startPosition);
+
+            } else {
+                x++;
+            }
+        }
+
+        return myMoods;
     }
 }

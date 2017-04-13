@@ -27,9 +27,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public ExpandableListAdapter(List<String> headers, Map<String, String> info,
                                  List<Integer> icons, Context context) {
 
-        Log.d(strTAG, "Headers: " + headers + ", info: " + info
-                + ", icons: " + icons);
-
         this.headers = headers;
         this.info = info;
         this.icons = icons;
@@ -40,12 +37,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean b, View view,
                              ViewGroup viewGroup) {
 
-        Log.d(strTAG, "Group position: " + groupPosition);
-
         View groupView = view;
 
         if (groupView == null) {
-            Log.d(strTAG, "Parent View is null");
 
             LayoutInflater inflater = (LayoutInflater) mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -83,9 +77,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean b,
                              View view, ViewGroup viewGroup) {
 
-        Log.d(strTAG, "groupPosition: " + groupPosition + ", childPosition: "
-                + " " + childPosition);
-
         LayoutInflater inflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -94,7 +85,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         TextView bodyText = (TextView) convertView.findViewById(R.id.list_item);
         String text = info.get(headers.get(groupPosition));
-        Log.d(strTAG, "Body text set to " + text);
         bodyText.setText(text);
 
         ImageView buttonView = (ImageView) convertView
@@ -107,32 +97,26 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
             case R.drawable.ic_sync_black_36dp:
                 buttonView.setId(R.id.btn_scan);
-                Log.d(strTAG, "Assigned id to scan button");
                 break;
 
             case R.drawable.ic_filter_list_black_36dp:
                 buttonView.setId(R.id.btn_metadata);
-                Log.d(strTAG, "Assigned id to filter button");
                 break;
 
             case R.drawable.ic_cloud_upload_black_36dp:
                 buttonView.setId(R.id.btn_gracenote);
-                Log.d(strTAG, "Assigned id to gracenote button");
                 break;
 
             case R.drawable.ic_sd_storage_black_36dp:
                 buttonView.setId(R.id.btn_db);
-                Log.d(strTAG, "Assigned id to db button");
                 break;
 
             case R.drawable.ic_camera_alt_black_36dp:
                 buttonView.setId(R.id.btn_camera);
-                Log.d(strTAG, "Assigned id to camera button");
                 break;
 
             case R.drawable.ic_question_answer_black_36dp:
                 buttonView.setId(R.id.btn_faq);
-                Log.d(strTAG, "Assigned id to faq button");
                 break;
 
             default:

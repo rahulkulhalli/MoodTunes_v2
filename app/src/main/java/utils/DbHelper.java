@@ -20,6 +20,37 @@ import pojos.Mp3Song;
 public class DbHelper extends SQLiteOpenHelper {
 
     /**
+     * Column no. 1
+     */
+    private static final int COLUMN_1 = 0;
+
+    /**
+     * Column no. 2
+     */
+    private static final int COLUMN_2 = 1;
+
+    /**
+     * Column no. 3
+     */
+    private static final int COLUMN_3 = 2;
+
+    /**
+     * Column no. 4
+     */
+    private static final int COLUMN_4 = 3;
+
+    /**
+     * Column no. 5
+     */
+    private static final int COLUMN_5 = 4;
+
+    /**
+     * Column no. 6
+     */
+    private static final int COLUMN_6 = 5;
+
+
+    /**
      * Application context.
      */
     private Context mContext;
@@ -77,9 +108,12 @@ public class DbHelper extends SQLiteOpenHelper {
             Cursor cursor = db.rawQuery(dbQuery, null);
 
             if (cursor.moveToFirst()) {
-                return new Mp3Song(cursor.getString(0), cursor.getString(1),
-                        cursor.getString(2), cursor.getString(3),
-                        cursor.getString(4), cursor.getString(5));
+                return new Mp3Song(cursor.getString(COLUMN_1),
+                        cursor.getString(COLUMN_2),
+                        cursor.getString(COLUMN_3),
+                        cursor.getString(COLUMN_4),
+                        cursor.getString(COLUMN_5),
+                        cursor.getString(COLUMN_6));
             }
 
             cursor.close();
@@ -92,8 +126,12 @@ public class DbHelper extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(dbQuery, null);
 
         if (c.moveToFirst()) {
-            return new Mp3Song(c.getString(0), c.getString(1), c.getString(2),
-                    c.getString(3), c.getString(4), c.getString(5));
+            return new Mp3Song(c.getString(COLUMN_1),
+                    c.getString(COLUMN_2),
+                    c.getString(COLUMN_3),
+                    c.getString(COLUMN_4),
+                    c.getString(COLUMN_5),
+                    c.getString(COLUMN_6));
         }
 
         c.close();

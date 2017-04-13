@@ -21,16 +21,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,10 +74,17 @@ import utils.SongScanner;
  * <hr>
  *
  */
-public class HomeScreenActivity extends AppCompatActivity implements ToolbarInterface {
+public class HomeScreenActivity extends AppCompatActivity implements
+        ToolbarInterface {
 
+    /**
+     * The {@link ExpandableListView}.
+     */
     private ExpandableListView myView;
 
+    /**
+     * App {@link Toolbar}.
+     */
     private Toolbar mainToolbar;
 
     /**
@@ -206,6 +208,9 @@ public class HomeScreenActivity extends AppCompatActivity implements ToolbarInte
 
                     showAlert("Smiling probability is " + smilingProbability);
 
+                    // dummy implementation:
+
+
                 } catch (FileNotFoundException fNfE) {
                     fNfE.printStackTrace();
                 }
@@ -222,6 +227,11 @@ public class HomeScreenActivity extends AppCompatActivity implements ToolbarInte
         Snackbar.make(rootView, alertMsg, Snackbar.LENGTH_LONG);
     }
 
+    /**
+     * A private method to initialize the adapter.
+     *
+     * @return {@link ExpandableListView} adapter.
+     */
     private ExpandableListView setMyAdapter() {
         ExpandableListView view =
                 (ExpandableListView) findViewById(R.id.stepper_menu);
@@ -252,7 +262,8 @@ public class HomeScreenActivity extends AppCompatActivity implements ToolbarInte
         iconIds.add(R.drawable.ic_question_answer_black_36dp);
 
         ExpandableListAdapter myCustomAdapter =
-                new ExpandableListAdapter(headers, children, iconIds, getApplication());
+                new ExpandableListAdapter(headers, children, iconIds,
+                        getApplication());
 
         view.setAdapter(myCustomAdapter);
 
@@ -272,20 +283,16 @@ public class HomeScreenActivity extends AppCompatActivity implements ToolbarInte
         // Check permissions
         checkForPermissions();
 
-        /**
-         * Create a single reference to the {@link CustomListener}.
-         */
-        CustomListener customListener = new CustomListener();
-
         initializeToolbar(getString(R.string.app_name));
 
         myView = setMyAdapter();
         myView.setOnChildClickListener(new CustomExpandableAdapterListener());
-        myView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+        myView.setOnGroupExpandListener(new ExpandableListView
+                .OnGroupExpandListener() {
             int someIndex = -1;
 
             @Override
-            public void onGroupExpand(int groupPosition) {
+            public void onGroupExpand(final int groupPosition) {
                 if (groupPosition != someIndex) {
                     myView.collapseGroup(someIndex);
                 }
@@ -328,43 +335,65 @@ public class HomeScreenActivity extends AppCompatActivity implements ToolbarInte
         return false;
     }
 
+    /**
+     * Overriding the Toolbar interface to set title.
+     *
+     * @param toolbarTitle Title of the toolbar.
+     */
     @Override
     public void initializeToolbar(final String toolbarTitle) {
         mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setToolbarTitle(toolbarTitle);
     }
 
+    /**
+     * Set the title of the toolbar.
+     *
+     * @param title Title of the Toolbar.
+     */
     @Override
     public void setToolbarTitle(final String title) {
         View toolbarView = mainToolbar.getRootView();
-        TextView headerText = (TextView) toolbarView.findViewById(R.id.toolbar_title);
+        TextView headerText = (TextView) toolbarView.findViewById(R.id
+                .toolbar_title);
         headerText.setText(title);
         setDropdownListener();
     }
 
+    /**
+     * Set dropdown listener.
+     */
     @Override
     public void setDropdownListener() {
         mainToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 showAlert("Toolbar dropdown clicked");
             }
         });
     }
 
+    /**
+     * Actions to perform when app resumes.
+     */
     @Override
     protected void onResume() {
         super.onResume();
         initializeToolbar(getString(R.string.app_name));
     }
 
-
+    /**
+     * A private class to implement the
+     * {@link android.widget.ExpandableListView.OnChildClickListener
+     * OnChildClickListener} of the ExpandableListView.
+     */
     private class CustomExpandableAdapterListener implements ExpandableListView
             .OnChildClickListener {
 
         @Override
-        public boolean onChildClick(ExpandableListView expandableListView,
-                                    View view, int parentNo, int childNo, long l) {
+        public boolean onChildClick(final ExpandableListView expandableListView,
+                                    final View view, final int parentNo,
+                                    final int childNo, final long l) {
 
             switch (parentNo) {
                 case 0:
@@ -378,48 +407,14 @@ public class HomeScreenActivity extends AppCompatActivity implements ToolbarInte
                     String flattenedSongs = gson.toJson(songs);
                     serviceIntent.putExtra("SONGS_LIST", flattenedSongs);
                     startService(serviceIntent);
-                    myView.collapseGroup(1);
                     break;
 
                 case 2:
                     startTime = System.currentTimeMillis();
                     (new GracenoteAsyncTask()).execute();
                     break;
-            }
 
-            return true;
-        }
-    }
-
-    /**
-     * A listener class that acts upon button clicks.
-     */
-    private class CustomListener implements View.OnClickListener {
-        @Override
-        public void onClick(final View view) {
-            switch (view.getId()) {
-                case R.id.btn_scan:
-                    (new ScannerAsyncTask()).execute();
-                    break;
-
-
-                case R.id.btn_gracenote:
-                    startTime = System.currentTimeMillis();
-                    (new GracenoteAsyncTask()).execute();
-                    break;
-
-
-                case R.id.btn_metadata:
-                    Intent serviceIntent = new Intent(HomeScreenActivity.this,
-                            MetadataCleaner.class);
-                    Gson gson = new GsonBuilder().create();
-                    String flattenedSongs = gson.toJson(songs);
-                    serviceIntent.putExtra("SONGS_LIST", flattenedSongs);
-                    startService(serviceIntent);
-                    break;
-
-
-                case R.id.btn_db:
+                case 3:
 
                     DbHelper helper = new
                             DbHelper(HomeScreenActivity.this);
@@ -430,7 +425,7 @@ public class HomeScreenActivity extends AppCompatActivity implements ToolbarInte
                     for (Mp3Song song : finalSongsList) {
 
                         Log.d(Constants.HOME_SCREEN_CLASS, "Final song : "
-                         + song.toString());
+                                + song.toString());
 
                         if (song.getSongName().contains("'")) {
                             song.setSongName(song.getSongName()
@@ -473,14 +468,15 @@ public class HomeScreenActivity extends AppCompatActivity implements ToolbarInte
 
                     break;
 
-                case R.id.btn_camera:
+                case 4:
+
                     Intent cameraIntent =
                             new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
                     Uri photoURI = FileProvider
                             .getUriForFile(HomeScreenActivity.this,
-                            BuildConfig.APPLICATION_ID + ".provider",
-                            prepareFile());
+                                    BuildConfig.APPLICATION_ID + ".provider",
+                                    prepareFile());
 
                     cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                             photoURI);
@@ -488,8 +484,7 @@ public class HomeScreenActivity extends AppCompatActivity implements ToolbarInte
                             Constants.INTENT_REQUEST_CODE);
                     break;
 
-                case R.id.btn_faq:
-
+                case 5:
                     FragmentTransaction faqTransaction =
                             getSupportFragmentManager().beginTransaction();
 
@@ -501,9 +496,9 @@ public class HomeScreenActivity extends AppCompatActivity implements ToolbarInte
                     faqTransaction.commit();
 
                     break;
-
-                default: break;
             }
+
+            return true;
         }
     }
 
@@ -540,7 +535,7 @@ public class HomeScreenActivity extends AppCompatActivity implements ToolbarInte
             super.onPostExecute(aVoid);
             dialog.cancel();
             Log.d(Constants.HOME_SCREEN_CLASS, "Size of song list "
-                    + "== " + songsMap.size());
+                    + "= " + songsMap.size());
 
             for (Map.Entry<String, String> set : songsMap.entrySet()) {
                 Mp3Song song = new Mp3Song();
@@ -551,7 +546,7 @@ public class HomeScreenActivity extends AppCompatActivity implements ToolbarInte
 
             Log.d(Constants.HOME_SCREEN_CLASS, "Added songs to list");
             Toast.makeText(HomeScreenActivity.this, "We detected a total of "
-                    + songs.size() + " songs on your SD card", Toast
+                    + songs.size() + " songs on your SD card.", Toast
                     .LENGTH_LONG).show();
             myView.collapseGroup(0);
         }
